@@ -26,7 +26,7 @@ import glob
 from subprocess import CalledProcessError
 
 from multiprocessing import Pool
-from pypdfocr.pypdfocr_interrupts import init_worker
+from pypdfocr_interrupts import init_worker
 
 def error(text):
     print("ERROR: %s" % text)
@@ -89,14 +89,14 @@ class PyTesseract(object):
 
         ver_str = '0.0.0'
         for line in ret_output.splitlines():
-            if 'tesseract' in str(line):
-                ver_str = str(line).split(' ')[1]
+            if 'tesseract' in line:
+                ver_str = line.split(' ')[1]
                 if ver_str.endswith('dev'): # Fix for version strings that end in 'dev'
                     ver_str = ver_str[:-3]
 
         # Iterate through the version dots
-        ver = [x for x in ver_str.split('.')]
-        req = [x for x in self.required.split('.')]
+        ver = [int(x) for x in ver_str.split('.')]
+        req = [int(x) for x in self.required.split('.')]
 
         # Aargh, in windows 3.02.02 is reported as version 3.02  
         # SFKM
@@ -160,15 +160,13 @@ class PyTesseract(object):
             error(self.msgs['TS_img_MISSING'] + " %s" % (img_filename))
 
         logging.info("Running OCR on %s to create %s.html" % (img_filename, basename))
-        #cmd = '%s "%s" "%s" -psm 1 -c hocr_font_info=1 -l %s hocr' % (self.binary, img_filename, basename, self.lang)
-        #Sintaxe correta para pegar o idioma indicano na linha de comando
-        cmd = '%s "%s" "%s" -l %s -psm 1 -c hocr_font_info=1 hocr' % (self.binary, img_filename, basename, self.lang)
+        cmd = '%s "%s" "%s" -psm 1 -c hocr_font_info=1 -l %s hocr' % (self.binary, img_filename, basename, self.lang)
         logging.info(cmd)
         try:
             ret_output = subprocess.check_output(cmd, shell=True,  stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
             # Could not run tesseract
-            print(e.output)
+            print e.output
             self._warn (self.msgs['TS_FAILED'])
                 
         if os.path.isfile(hocr_filename):

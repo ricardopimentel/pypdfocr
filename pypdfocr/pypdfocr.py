@@ -21,24 +21,24 @@ import shutil, glob
 import itertools
 from functools import wraps
 
-from pypdfocr.version import __version__
+from version import __version__
 from PIL import Image
 import yaml
 
 import multiprocessing
 # Replace the Popen routine to allow win32 pyinstaller to build
-#from multiprocessing import forking
-#from pypdfocr_multiprocessing import _Popen
-#forking.Popen = _Popen
+from multiprocessing import forking
+from pypdfocr_multiprocessing import _Popen
+forking.Popen = _Popen
 
-from pypdfocr.pypdfocr_pdf import PyPdf
-from pypdfocr.pypdfocr_tesseract import PyTesseract
-from pypdfocr.pypdfocr_gs import PyGs
-from pypdfocr.pypdfocr_watcher import PyPdfWatcher
-from pypdfocr.pypdfocr_pdffiler import PyPdfFiler
-from pypdfocr.pypdfocr_filer_dirs import PyFilerDirs
-from pypdfocr.pypdfocr_filer_evernote import PyFilerEvernote
-from pypdfocr.pypdfocr_preprocess import PyPreprocess
+from pypdfocr_pdf import PyPdf
+from pypdfocr_tesseract import PyTesseract
+from pypdfocr_gs import PyGs
+from pypdfocr_watcher import PyPdfWatcher
+from pypdfocr_pdffiler import PyPdfFiler
+from pypdfocr_filer_dirs import PyFilerDirs
+from pypdfocr_filer_evernote import PyFilerEvernote
+from pypdfocr_preprocess import PyPreprocess
 
 def error(text):
     print("ERROR: %s" % text)
@@ -367,11 +367,11 @@ class PyPDFOCR(object):
             time.sleep(1)
             if not self.debug:
                 # Need to clean up the original image files before preprocessing
-                if "fns" in locals(): # Have to check if this was set before exception raised
+                if locals().has_key("fns"): # Have to check if this was set before exception raised
                     logging.info("Cleaning up %s" % fns)
                     self._clean_up_files(fns)
 
-                if "preprocess_imagefilenames" in locals():  # Have to check if this was set before exception raised
+                if locals().has_key("preprocess_imagefilenames"):  # Have to check if this was set before exception raised
                     logging.info("Cleaning up %s" % preprocess_imagefilenames)
                     self._clean_up_files(preprocess_imagefilenames) # splat the hocr_filenames as it is a list of pairs
                     for ext in [".hocr", ".html", ".txt"]:
@@ -467,7 +467,7 @@ class PyPDFOCR(object):
                 except KeyboardInterrupt:
                     break
                 except Exception as e:
-                    print(traceback.print_exc(e))
+                    print traceback.print_exc(e)
                     py_watcher.stop()
                     
         else:
