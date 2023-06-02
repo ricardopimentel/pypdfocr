@@ -28,7 +28,7 @@ import functools
 import signal
 
 from multiprocessing import Pool
-from pypdfocr_interrupts import init_worker
+from pypdfocr.pypdfocr_interrupts import init_worker
 
 # Ugly hack to pass in object method to the multiprocessing library
 # From http://www.rueckstiess.net/research/snippets/show/ca1d7d90
@@ -58,7 +58,7 @@ class PyPreprocess(object):
             logging.debug(out)
             return out
         except subprocess.CalledProcessError as e:
-            print e.output
+            print(e.output)
             self._warn("Could not run command %s" % cmd_list)
             
 

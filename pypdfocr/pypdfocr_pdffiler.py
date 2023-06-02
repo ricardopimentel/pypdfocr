@@ -18,15 +18,15 @@
     on keywords
 """
 
-from sets import Set    
+#from sets import Set
 import sys, os
 import re
 import logging
 import shutil
 
 from PyPDF2 import PdfFileReader
-from pypdfocr_filer import PyFiler
-from pypdfocr_filer_dirs import PyFilerDirs
+from pypdfocr.pypdfocr_filer import PyFiler
+from pypdfocr.pypdfocr_filer_dirs import PyFilerDirs
 
 class PyPdfFiler(object):
     def __init__(self, filer):
